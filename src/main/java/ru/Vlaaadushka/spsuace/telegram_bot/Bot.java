@@ -1,4 +1,4 @@
-package ru.Vlaaadushka.spsuace.TelegramBot;
+package ru.Vlaaadushka.spsuace.telegram_bot;
 
 import org.telegram.telegrambots.bots.DefaultBotOptions;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -6,6 +6,7 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+
 
 public class Bot extends TelegramLongPollingBot {
 
@@ -16,14 +17,11 @@ public class Bot extends TelegramLongPollingBot {
         super(botOptions);
     }
 
-
     @Override
     public void onUpdateReceived(Update update) {
         Message message = update.getMessage();
-        SendMessage sendMessage1 = new  SendMessage(message.getChatId(), message.getText());
-
         update.getUpdateId();
-        SendMessage sendMessage = new SendMessage().setChatId(update.getMessage().getChatId());
+        SendMessage sendMessage = new SendMessage(message.getChatId(), message.getText()).setChatId(update.getMessage().getChatId());
 
         if (update.getMessage().getText().equals("Привет")) {
             sendMessage.setText("Приветствую тебя, человек!");
@@ -33,9 +31,9 @@ public class Bot extends TelegramLongPollingBot {
                 e.printStackTrace();
             }
         } else {
-            sendMessage1.setText("Напиши мне 'Привет', человек, и я может быть отвечу тебе!");
+            sendMessage.setText("Напиши мне 'Привет', человек, и я может быть отвечу тебе!");
             try {
-                execute(sendMessage1);
+                execute(sendMessage);
             } catch (TelegramApiException e) {
                 e.printStackTrace();
             }
