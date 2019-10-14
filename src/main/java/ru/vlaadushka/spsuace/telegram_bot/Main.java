@@ -1,4 +1,4 @@
-package ru.Vlaaadushka.spsuace.telegram_bot;
+package ru.vlaadushka.spsuace.telegram_bot;
 
 import org.telegram.telegrambots.ApiContextInitializer;
 import org.telegram.telegrambots.bots.DefaultBotOptions;
