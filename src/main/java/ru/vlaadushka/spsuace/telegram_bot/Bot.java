@@ -3,10 +3,16 @@ package ru.vlaadushka.spsuace.telegram_bot;
 import org.telegram.telegrambots.bots.DefaultBotOptions;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+import java.util.ArrayList;
+import java.util.List;
 
 public class Bot extends TelegramLongPollingBot {
 
@@ -19,11 +25,14 @@ public class Bot extends TelegramLongPollingBot {
 
     @Override
     public void onUpdateReceived(Update update) {
+
         Message message = update.getMessage();
         update.getUpdateId();
         SendMessage sendMessage = new SendMessage(message.getChatId(), message.getText()).setChatId(update.getMessage().getChatId());
 
-        if (update.getMessage().getText().equals("Привет")) {
+        sendMessage.setText(String.valueOf(new HelloCommand()));
+
+         if (update.getMessage().getText().equals("Привет")) {
             sendMessage.setText("Приветствую тебя, человек!");
             try {
                 execute(sendMessage);
