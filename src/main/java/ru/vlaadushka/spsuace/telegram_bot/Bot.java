@@ -26,24 +26,24 @@ public class Bot extends TelegramLongPollingBot {
     }
 
     public static SendMessage sendInlineKeyBoardMessage(long chatId) {
+        
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
-        InlineKeyboardButton inlineKeyboardButton1 = new InlineKeyboardButton();
-        InlineKeyboardButton inlineKeyboardButton2 = new InlineKeyboardButton();
-        inlineKeyboardButton1.setText("Носик");
-        inlineKeyboardButton1.setCallbackData("Котик \"Носик\" любопытный");
-        inlineKeyboardButton2.setText("Хвост");
-        inlineKeyboardButton2.setCallbackData("Котик \"Хвост\" длинный");
-        List<InlineKeyboardButton> keyboardButtonsRow1 = new ArrayList<>();
-        List<InlineKeyboardButton> keyboardButtonsRow2 = new ArrayList<>();
-        keyboardButtonsRow1.add(inlineKeyboardButton1);
-        keyboardButtonsRow1.add(new InlineKeyboardButton().setText("Лапка").setCallbackData("Котик \"Лапка\" пушистая"));
-        keyboardButtonsRow2.add(inlineKeyboardButton2);
         List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
+        List<InlineKeyboardButton> keyboardButtonsRow1 = new ArrayList<>();
+
+        keyboardButtonsRow1.add(new InlineKeyboardButton().setText("Носик").setSwitchInlineQueryCurrentChat("Котик \"Носик\" любопытный"));
+        keyboardButtonsRow1.add(new InlineKeyboardButton().setText("Хвост").setUrl("https://vk.com/avershelp"));
         rowList.add(keyboardButtonsRow1);
+
+        List<InlineKeyboardButton> keyboardButtonsRow2 = new ArrayList<>();
+        keyboardButtonsRow2.add(new InlineKeyboardButton().setText("Лапка").setSwitchInlineQuery("Котик \"Лапка\" пушистая"));
+        keyboardButtonsRow2.add(new InlineKeyboardButton().setText("Усы").setCallbackData("Котик \"Усы"));
         rowList.add(keyboardButtonsRow2);
+
         inlineKeyboardMarkup.setKeyboard(rowList);
         return new SendMessage().setChatId(chatId).setText("Что выберешь ты?").setReplyMarkup(inlineKeyboardMarkup);
     }
+
 
 
     @Override
