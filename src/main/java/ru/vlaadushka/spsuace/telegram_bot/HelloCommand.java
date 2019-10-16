@@ -19,7 +19,7 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
             if(userName==null || userName.isEmpty()){
                 userName=user.getFirstName()+" " +user.getLastName();
             }
-            StringBuilder messageTextBuilder = new StringBuilder("Hello ").append(userName);
+            StringBuilder messageTextBuilder = new StringBuilder("Hello").append(userName);
             if(arguments!=null && arguments.length>0){
                 messageTextBuilder.append("\n");
                 messageTextBuilder.append("Thank you so much for your kind words:\n");
