@@ -69,55 +69,60 @@ public class Bot extends TelegramLongPollingBot {
 
         Message message = update.getMessage();
         update.getUpdateId();
-        SendMessage sendMessage = new SendMessage(message.getChatId(), message.getText()).setChatId(update.getMessage().getChatId());
 
-        if (update.getMessage().getText().equals("Мур")) {
-            try {
-                execute(sendReplyKeyBoardMessage(update.getMessage().getChatId()));
-            } catch (TelegramApiException e) {
-                e.printStackTrace();
-            }
-        } else {
-            if (update.getMessage().getText().equals("/hello")) {
-                sendMessage.setText(String.valueOf(new HelloCommand()));
+
+        if (update.hasMessage()) {
+            SendMessage sendMessage = new SendMessage(message.getChatId(), message.getText()).setChatId(update.getMessage().getChatId());
+            if (update.getMessage().getText().equals("Мур")) {
                 try {
-                    execute(sendMessage);
+                    execute(sendReplyKeyBoardMessage(update.getMessage().getChatId()));
                 } catch (TelegramApiException e) {
                     e.printStackTrace();
                 }
-            } else if(update.hasCallbackQuery()){
+            } else {
+                if (update.getMessage().getText().equals("/hello")) {
+                    sendMessage.setText(String.valueOf(new HelloCommand()));
+                    try {
+                        execute(sendMessage);
+                    } catch (TelegramApiException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    if (update.getMessage().getText().equals("Котик")) {
+                        try {
+                            execute(sendInlineKeyBoardMessage(update.getMessage().getChatId()));
+                        } catch (TelegramApiException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        if (update.getMessage().getText().equals("Привет")) {
+                            sendMessage.setText("Приветствую тебя, человек!");
+                            try {
+                                execute(sendMessage);
+                            } catch (TelegramApiException e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            sendMessage.setText("Напиши мне 'Привет', человек, и я может быть отвечу тебе!");
+                            try {
+                                execute(sendMessage);
+                            } catch (TelegramApiException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                }
+            }
+        } else if(update.hasCallbackQuery()) {
                 String callbackId = update.getCallbackQuery().getId();
-                AnswerCallbackQuery answerCallbackQuery = new AnswerCallbackQuery().setCallbackQueryId(callbackId).setText("Окей").setShowAlert(true);
+                AnswerCallbackQuery answerCallbackQuery = new AnswerCallbackQuery()
+                        .setCallbackQueryId(callbackId)
+                        .setText("Окей").setShowAlert(true);
                 try {
                     execute(answerCallbackQuery);
                 } catch (TelegramApiException e) {
                     e.printStackTrace();
                 }
-            } else {
-                if (update.getMessage().getText().equals("Котик")) {
-                    try {
-                        execute(sendInlineKeyBoardMessage(update.getMessage().getChatId()));
-                    } catch (TelegramApiException e) {
-                        e.printStackTrace();
-                    }
-                } else {
-                    if (update.getMessage().getText().equals("Привет")) {
-                        sendMessage.setText("Приветствую тебя, человек!");
-                        try {
-                            execute(sendMessage);
-                        } catch (TelegramApiException e) {
-                            e.printStackTrace();
-                        }
-                    } else {
-                        sendMessage.setText("Напиши мне 'Привет', человек, и я может быть отвечу тебе!");
-                        try {
-                            execute(sendMessage);
-                        } catch (TelegramApiException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            }
         }
     }
 
