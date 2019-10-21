@@ -1,7 +1,7 @@
 package ru.vlaadushka.spsuace.telegram_bot;
 
 import org.telegram.telegrambots.bots.DefaultBotOptions;
-import org.telegram.telegrambots.bots.TelegramLongPollingBot;
+import org.telegram.telegrambots.extensions.bots.commandbot.TelegramLongPollingCommandBot;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
@@ -15,14 +15,16 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Bot extends TelegramLongPollingBot {
+public class Bot extends TelegramLongPollingCommandBot {
 
     public static final String USERNAME = "@Marsichka_bot";
     public static final String TOKEN = "704406634:AAHypsnTvkeBUx3Lx87kMwVFYSjX0CwBHhQ";
 
-    public Bot(DefaultBotOptions botOptions) {
-        super(botOptions);
+    Bot(DefaultBotOptions botOptions) {
+        super(botOptions, USERNAME);
+        register(new HelloCommand());
     }
+
 
     private static SendMessage sendReplyKeyBoardMessage(long chatId) {
 
@@ -40,7 +42,9 @@ public class Bot extends TelegramLongPollingBot {
         keyboard.add(keyboardSecondRow);
         replyKeyboardMarkup.setKeyboard(keyboard);
 
-        return new SendMessage().setChatId(chatId).setText("Что выберешь ты?").setReplyMarkup(replyKeyboardMarkup);
+        return new SendMessage().setChatId(chatId)
+                .setText("Что выберешь ты?")
+                .setReplyMarkup(replyKeyboardMarkup);
     }
 
    private SendMessage sendInlineKeyBoardMessage(long chatId) {
@@ -49,39 +53,50 @@ public class Bot extends TelegramLongPollingBot {
         List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
         List<InlineKeyboardButton> keyboardButtonsRow1 = new ArrayList<>();
 
-        keyboardButtonsRow1.add(new InlineKeyboardButton().setText("Носик").setSwitchInlineQueryCurrentChat("Котик \"Носик\" любопытный"));
-        keyboardButtonsRow1.add(new InlineKeyboardButton().setText("Хвост").setUrl("https://vk.com/avershelp"));
+        keyboardButtonsRow1.add(new InlineKeyboardButton()
+                .setText("Носик")
+                .setSwitchInlineQueryCurrentChat("Котик \"Носик\" любопытный"));
+        keyboardButtonsRow1.add(new InlineKeyboardButton()
+                .setText("Хвост")
+                .setUrl("https://vk.com/avershelp"));
         rowList.add(keyboardButtonsRow1);
 
         List<InlineKeyboardButton> keyboardButtonsRow2 = new ArrayList<>();
-        keyboardButtonsRow2.add(new InlineKeyboardButton().setText("Лапка").setSwitchInlineQuery("Котик \"Лапка\" пушистая"));
-        keyboardButtonsRow2.add(new InlineKeyboardButton().setText("Усы").setCallbackData("Усы"));
+        keyboardButtonsRow2.add(new InlineKeyboardButton()
+                .setText("Лапка")
+                .setSwitchInlineQuery("Котик \"Лапка\" пушистая"));
+        keyboardButtonsRow2.add(new InlineKeyboardButton()
+                .setText("Усы")
+                .setCallbackData("Усы"));
         rowList.add(keyboardButtonsRow2);
 
         inlineKeyboardMarkup.setKeyboard(rowList);
-        return new SendMessage().setChatId(chatId).setText("Что выберешь ты?").setReplyMarkup(inlineKeyboardMarkup);
+        return new SendMessage().setChatId(chatId)
+                .setText("Что выберешь ты?")
+                .setReplyMarkup(inlineKeyboardMarkup);
     }
 
-
-
     @Override
-    public void onUpdateReceived(Update update) {
-
+    public void processNonCommandUpdate(Update update) {
         Message message = update.getMessage();
         update.getUpdateId();
 
 
+
         if (update.hasMessage()) {
-            SendMessage sendMessage = new SendMessage(message.getChatId(), message.getText()).setChatId(update.getMessage().getChatId());
+            SendMessage sendMessage = new SendMessage(message.getChatId(), message.getText())
+                    .setChatId(update.getMessage().getChatId());
+            SendMessage replyKeyboardMarkup = sendReplyKeyBoardMessage(update.getMessage().getChatId());
+            SendMessage inlineKeyboardButton = sendInlineKeyBoardMessage(update.getMessage().getChatId());
             if (update.getMessage().getText().equals("Мур")) {
                 try {
-                    execute(sendReplyKeyBoardMessage(update.getMessage().getChatId()));
+                    execute(replyKeyboardMarkup);
                 } catch (TelegramApiException e) {
                     e.printStackTrace();
                 }
             } else {
-                if (update.getMessage().getText().equals("/hello")) {
-                    sendMessage.setText(String.valueOf(new HelloCommand()));
+                if (message.getText().equals("hello")) {
+                    sendMessage.setText("hello, Master!");
                     try {
                         execute(sendMessage);
                     } catch (TelegramApiException e) {
@@ -90,7 +105,7 @@ public class Bot extends TelegramLongPollingBot {
                 } else {
                     if (update.getMessage().getText().equals("Котик")) {
                         try {
-                            execute(sendInlineKeyBoardMessage(update.getMessage().getChatId()));
+                            execute(inlineKeyboardButton);
                         } catch (TelegramApiException e) {
                             e.printStackTrace();
                         }
@@ -114,26 +129,20 @@ public class Bot extends TelegramLongPollingBot {
                 }
             }
         } else if(update.hasCallbackQuery()) {
-                String callbackId = update.getCallbackQuery().getId();
-                AnswerCallbackQuery answerCallbackQuery = new AnswerCallbackQuery()
-                        .setCallbackQueryId(callbackId)
-                        .setText("Окей").setShowAlert(true);
-                try {
-                    execute(answerCallbackQuery);
-                } catch (TelegramApiException e) {
-                    e.printStackTrace();
-                }
+            String callbackId = update.getCallbackQuery().getId();
+            AnswerCallbackQuery answerCallbackQuery = new AnswerCallbackQuery()
+                    .setCallbackQueryId(callbackId)
+                    .setText("Окей").setShowAlert(true);
+            try {
+                execute(answerCallbackQuery);
+            } catch (TelegramApiException e) {
+                e.printStackTrace();
+            }
         }
-    }
-
-    @Override
-    public String getBotUsername() {
-        return USERNAME;
     }
 
     @Override
     public String getBotToken() {
         return TOKEN;
     }
-
 }
