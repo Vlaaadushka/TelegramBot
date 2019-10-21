@@ -96,7 +96,6 @@ public class Bot extends TelegramLongPollingCommandBot {
                 }
             } else {
                 if (message.getText().equals("hello")) {
-                    sendMessage.setText("hello, Master!");
                     try {
                         execute(sendMessage);
                     } catch (TelegramApiException e) {
