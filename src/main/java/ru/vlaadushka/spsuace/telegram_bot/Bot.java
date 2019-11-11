@@ -15,12 +15,12 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Bot extends TelegramLongPollingCommandBot {
+    public class Bot extends TelegramLongPollingCommandBot {
 
     public static final String USERNAME = "@Marsichka_bot";
-    public static final String TOKEN = "704406634:AAHypsnTvkeBUx3Lx87kMwVFYSjX0CwBHhQ";
+    public static final String TOKEN = System.getenv("VARIABLE_NAME");
 
-    Bot(DefaultBotOptions botOptions) {
+    public Bot(DefaultBotOptions botOptions) {
         super(botOptions, USERNAME);
         register(new HelloCommand());
     }
