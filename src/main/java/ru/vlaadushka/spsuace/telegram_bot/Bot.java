@@ -24,8 +24,8 @@ import java.util.List;
     public static final String USERNAME = "@Marsichka_bot";
     public static final String TOKEN = System.getenv("VARIABLE_NAME");
 
-    public Bot(DefaultBotOptions botOptions) {
-        super(String.valueOf(botOptions), USERNAME);
+        public Bot(DefaultBotOptions botOptions) {
+        super(TOKEN, USERNAME, botOptions);
     }
 
     public Ability sayHelloWorld() {
