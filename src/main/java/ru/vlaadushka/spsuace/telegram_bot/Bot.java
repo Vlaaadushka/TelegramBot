@@ -5,19 +5,6 @@ import org.telegram.abilitybots.api.objects.Ability;
 import org.telegram.abilitybots.api.objects.Locality;
 import org.telegram.abilitybots.api.objects.Privacy;
 import org.telegram.telegrambots.bots.DefaultBotOptions;
-import org.telegram.telegrambots.extensions.bots.commandbot.TelegramLongPollingCommandBot;
-import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.objects.Message;
-import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
-import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-
-import java.util.ArrayList;
-import java.util.List;
 
     public class Bot extends AbilityBot {
 
@@ -40,6 +27,18 @@ import java.util.List;
                 .post(ctx -> silent.send("Bye world", ctx.chatId()))
                 .build();
     }
+
+        public Ability sayBook() {
+            return Ability
+                    .builder()
+                    .name("book")
+                    .info("напиши название книги")
+                    .input(0)
+                    .locality(Locality.ALL)
+                    .privacy(Privacy.PUBLIC)
+                    .action(ctx -> silent.send("Чтобы что-то найти я должен знать, что искать", ctx.chatId()))
+                    .build();
+        }
 
     @Override
     public int creatorId() {
