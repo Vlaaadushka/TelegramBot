@@ -15,9 +15,9 @@ public class Main {
 
         try {
             DefaultBotOptions botOptions = ApiContext.getInstance(DefaultBotOptions.class);
-            //botOptions.setProxyHost("177.8.226.254");
-            //botOptions.setProxyPort(8080);
-            //botOptions.setProxyType(DefaultBotOptions.ProxyType.HTTP);
+            botOptions.setProxyHost("104.244.77.254");
+            botOptions.setProxyPort(8080);
+            botOptions.setProxyType(DefaultBotOptions.ProxyType.HTTP);
             telegramBotsApi.registerBot(new Bot(botOptions));
         } catch (TelegramApiException e) {
             e.printStackTrace();
