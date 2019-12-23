@@ -110,10 +110,11 @@ public class Autor {
                 e.printStackTrace();
             }
 
-            Elements elements = booksDoc.getElementsByClass("font-size-14 color-white ml-5");
-            valuesLikesBooks += Integer.valueOf(elements.get(0).text());
-            valuesCommentsBooks += Integer.valueOf(elements.get(1).text());
-            valuesViewsBooks += Integer.valueOf(elements.get(2).text());
+            List<String> elements = pars.getElementStrings(booksDoc, "font-size-14 color-white ml-5");
+//            Elements elements = booksDoc.getElementsByClass("font-size-14 color-white ml-5");
+            valuesLikesBooks += Integer.valueOf(elements.get(0));
+            valuesCommentsBooks += Integer.valueOf(elements.get(1));
+            valuesViewsBooks += Integer.valueOf(elements.get(2));
         }
         return "";
     }
