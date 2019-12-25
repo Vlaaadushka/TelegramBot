@@ -1,6 +1,6 @@
 package ru.vlaadushka.spsuace.telegram_bot;
 
-
+import org.jsoup.Jsoup;
 import org.telegram.telegrambots.bots.DefaultBotOptions;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -15,8 +15,6 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-import static java.rmi.activation.Activatable.register;
-
 public class Bot extends TelegramLongPollingBot {
 
     public static final String USERNAME = "@Marsichka_bot";
@@ -24,6 +22,7 @@ public class Bot extends TelegramLongPollingBot {
 
     Book book = new Book();
     private long chat_id;
+    private Pars pars = new Pars();
 
     public Bot(DefaultBotOptions botOptions) {
         super(botOptions);
@@ -48,8 +47,9 @@ public class Bot extends TelegramLongPollingBot {
         if(msg.contains("Hi") || msg.contains("Hello") || msg.contains("Привет")){
             return "Привет дружище!";
         }
-        if(msg.contains("Информация о книге")){
-            return getInfoBook();
+        if(msg.contains("/bookInformation")){
+            msg = msg.replace("/bookInformation ", "");
+            return getInfoBook(msg);
         }
         if(msg.contains("/person")) {
             msg = msg.replace("/person ", "");
@@ -59,10 +59,10 @@ public class Bot extends TelegramLongPollingBot {
         return "Не понял!";
     }
 
-    public String getInfoBook(){
+    public String getInfoBook(String msg){
         SendPhoto sendPhotoRequest = new SendPhoto();
 
-        try(InputStream in = new URL(book.getImg()).openStream()){
+        try(InputStream in = new URL(book.getUrl()).openStream()){
             Files.copy(in, Paths.get("D:\\srgBook"));  // Выгружаем изображение с интернета
             sendPhotoRequest.setChatId(chat_id);
             sendPhotoRequest.setPhoto(new File("D:\\srgBook"));
@@ -75,21 +75,35 @@ public class Bot extends TelegramLongPollingBot {
         catch (TelegramApiException e) {
             e.printStackTrace();
         }
+
+        Book book = null;
+        try {
+            book = pars.giveBook(Jsoup.connect("https://www.surgebook.com/GGhe4ka/book/" + msg).get());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
 
         String info = book.getTitle()
                 + "\nАвтор " + book.getAutorName()
                 + "\nЖанр " + book.getGeners()
                 + "\n\nОписание\n" + book.getDescription()
                 + "\n\nКоличество лайков " + book.getLikes()
-                + "\n\nПоследние коментарии\n" + book.getCommentList();
+                + "\n\nПоследние коментарии\n" + book.getComment();
         return info;
     }
 
     public String getInfoPerson(String msg){
-        Autor aut = new Autor(msg);
+
+        Autor autor = null;
+        try {
+            autor = pars.giveAutor(Jsoup.connect("https://www.surgebook.com/" + msg).get(), msg);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         SendPhoto sendPhotoRequest = new SendPhoto();
-        try(InputStream in = new URL(aut.getImg()).openStream()){
+        try(InputStream in = new URL(autor.getUrl()).openStream()){
             Files.copy(in, Paths.get("D:\\srgBook"));  // Выгружаем изображение с интернета
             sendPhotoRequest.setChatId(chat_id);
             sendPhotoRequest.setPhoto(new File("D:\\srgBook"));
@@ -102,9 +116,9 @@ public class Bot extends TelegramLongPollingBot {
         catch (TelegramApiException e) {
             e.printStackTrace();
         }
-        aut.getImg();
+        autor.getUrl();
 
-        return aut.getInfoPerson();
+        return autor.getInfo();
     }
 
     @Override
