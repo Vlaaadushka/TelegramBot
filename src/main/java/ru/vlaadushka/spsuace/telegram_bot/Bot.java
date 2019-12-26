@@ -20,8 +20,6 @@ public class Bot extends TelegramLongPollingBot {
     public static final String USERNAME = "@Marsichka_bot";
     public static final String TOKEN = System.getenv("VARIABLE_NAME");
 
-    Book book = new Book();
-    private long chat_id;
     private Pars pars = new Pars();
 
     public Bot(DefaultBotOptions botOptions) {
@@ -33,8 +31,8 @@ public class Bot extends TelegramLongPollingBot {
         update.getUpdateId();
 
         SendMessage sendMessage = new SendMessage().setChatId(update.getMessage().getChatId());
-        chat_id = update.getMessage().getChatId();
-        sendMessage.setText(input(update.getMessage().getText()));
+        long chat_id = update.getMessage().getChatId();
+        sendMessage.setText(teams(update.getMessage().getText(), chat_id));
 
         try {
             execute(sendMessage);
@@ -43,39 +41,23 @@ public class Bot extends TelegramLongPollingBot {
         }
     }
 
-    public String input(String msg){
+    public String teams(String msg, long chat_id){
         if(msg.contains("Hi") || msg.contains("Hello") || msg.contains("Привет")){
             return "Привет дружище!";
         }
         if(msg.contains("/bookInformation")){
             msg = msg.replace("/bookInformation ", "");
-            return getInfoBook(msg);
+            return getInfoBook(msg, chat_id);
         }
         if(msg.contains("/person")) {
             msg = msg.replace("/person ", "");
-            return getInfoPerson(msg);
+            return getInfoPerson(msg, chat_id);
         }
 
         return "Не понял!";
     }
 
-    public String getInfoBook(String msg){
-        SendPhoto sendPhotoRequest = new SendPhoto();
-
-        try(InputStream in = new URL(book.getUrl()).openStream()){
-            Files.copy(in, Paths.get("D:\\srgBook"));  // Выгружаем изображение с интернета
-            sendPhotoRequest.setChatId(chat_id);
-            sendPhotoRequest.setPhoto(new File("D:\\srgBook"));
-            execute(sendPhotoRequest); // отправка картинки
-            Files.delete(Paths.get("D:\\srgBook")); // удаление картинки
-        }
-        catch (IOException ex){
-            System.out.println("File not found");
-        }
-        catch (TelegramApiException e) {
-            e.printStackTrace();
-        }
-
+    public String getInfoBook(String msg, long chat_id){
         Book book = null;
         try {
             book = pars.giveBook(Jsoup.connect("https://www.surgebook.com/GGhe4ka/book/" + msg).get());
@@ -83,6 +65,21 @@ public class Bot extends TelegramLongPollingBot {
             e.printStackTrace();
         }
 
+        SendPhoto sendPhotoRequest = new SendPhoto();
+        try(InputStream in = new URL(book.getUrl()).openStream()){
+            Files.copy(in, Paths.get("/Users/vlada/Desktop/srgBook"));  // Выгружаем изображение с интернета
+            sendPhotoRequest.setChatId(chat_id);
+            sendPhotoRequest.setPhoto(new File("/Users/vlada/Desktop/srgBook"));
+            execute(sendPhotoRequest); // отправка картинки
+            Files.delete(Paths.get("/Users/vlada/Desktop/srgBook")); // удаление картинки
+        }
+        catch (IOException ex){
+            System.out.println("File not found");
+        }
+        catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
+        book.getUrl();
 
         String info = book.getTitle()
                 + "\nАвтор " + book.getAutorName()
@@ -93,8 +90,7 @@ public class Bot extends TelegramLongPollingBot {
         return info;
     }
 
-    public String getInfoPerson(String msg){
-
+    public String getInfoPerson(String msg, long chat_id){
         Autor autor = null;
         try {
             autor = pars.giveAutor(Jsoup.connect("https://www.surgebook.com/" + msg).get(), msg);
@@ -104,11 +100,11 @@ public class Bot extends TelegramLongPollingBot {
 
         SendPhoto sendPhotoRequest = new SendPhoto();
         try(InputStream in = new URL(autor.getUrl()).openStream()){
-            Files.copy(in, Paths.get("D:\\srgBook"));  // Выгружаем изображение с интернета
+            Files.copy(in, Paths.get("/Users/vlada/Desktop/srgAutor"));  // Выгружаем изображение с интернета
             sendPhotoRequest.setChatId(chat_id);
-            sendPhotoRequest.setPhoto(new File("D:\\srgBook"));
+            sendPhotoRequest.setPhoto(new File("/Users/vlada/Desktop/srgAutor"));
             execute(sendPhotoRequest); // отправка картинки
-            Files.delete(Paths.get("D:\\srgBook")); // удаление картинки
+            Files.delete(Paths.get("/Users/vlada/Desktop/srgAutor")); // удаление картинки
         }
         catch (IOException ex){
             System.out.println("File not found");

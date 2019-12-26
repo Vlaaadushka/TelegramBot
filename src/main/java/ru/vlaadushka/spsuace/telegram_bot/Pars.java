@@ -100,8 +100,9 @@ public class Pars {
         List<String> names = getElementStrings(document, "info-stats-name");
         List<String> values = getElementStrings(document, "info-stats-num");
 
-        for(int i = 0; i < names.size(); i++)
+        for(int i = 0; i < names.size(); i++) {
             info += names.get(i) + ": " + values.get(i) + "\n";
+        }
 
         info += calculateAuthorBooks(autor);
         autor.setInfo(info);
